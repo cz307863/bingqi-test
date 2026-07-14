@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测一测 · 你最适合哪种兵器</title>
+    <style>
+        :root {
+            --bg: #f5f0e6;
+            --card: #faf7f1;
+            --card-border: #d4c5a9;
+            --text: #3d2b1f;
+            --text-light: #6b5d4f;
+            --gold: #b8860b;
+            --gold-light: #d4a745;
+            --red: #8b3a3a;
+            --red-light: #a85555;
+            --accent1: #c0392b;
+            --accent2: #d4842a;
+            --accent3: #7b5e3b;
+            --accent4: #6b4f8a;
+            --accent5: #2c5f8a;
+            --accent6: #b8860b;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            background-image:
+                radial-gradient(ellipse at 50% 0%, rgba(184, 134, 11, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(139, 58, 58, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(107, 79, 138, 0.03) 0%, transparent 50%);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            color: var(--text);
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            position: relative;
+        }
+
+        /* 顶部装饰 */
+        .top-ornament {
+            text-align: center;
+            margin-bottom: 6px;
+            opacity: 0.5;
+            font-size: 12px;
+            letter-spacing: 6px;
+            color: var(--gold);
+            user-select: none;
+        }
+
+        /* 主卡片 */
+        .main-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 28px 24px 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition);
+            min-height: 420px;
+        }
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold-light), var(--red-light), var(--gold-light), transparent);
+            opacity: 0.7;
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* 标题 */
+        .test-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .test-subtitle {
+            text-align: center;
+            font-size: 0.82rem;
+            color: var(--text-light);
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+
+        /* 进度条 */
+        .progress-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+        .progress-bar-outer {
+            flex: 1;
+            height: 6px;
+            background: #e8e0d3;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background: linear-gradient(90deg, #c9a96e, #b8860b);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+        .progress-text {
+            font-size: 0.78rem;
+            color: var(--text-light);
+            white-space: nowrap;
+            min-width: 36px;
+            text-align: right;
+            font-weight: 500;
+        }
+
+        /* 题目区 */
+        .question-area {
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .question-area.fade-out {
+            opacity: 0;
+            transform: translateY(-12px);
+        }
+        .question-number {
+            display: inline-block;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            color: var(--gold);
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        /* 选项按钮 */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px 16px;
+            background: #fffdf8;
+            border: 1.5px solid #e0d7c6;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text);
+            transition: all var(--transition);
+            text-align: left;
+            font-family: inherit;
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .option-btn:hover {
+            border-color: var(--gold-light);
+            background: #fffcf3;
+            box-shadow: 0 2px 12px rgba(184, 134, 11, 0.1);
+            transform: translateY(-1px);
+        }
+        .option-btn:active {
+            transform: scale(0.98);
+            background: #fef9ec;
+            border-color: var(--gold);
+            transition: 0.1s ease;
+        }
+        .option-btn.selected-flash {
+            border-color: var(--gold) !important;
+            background: #fef9ec !important;
+            box-shadow: 0 0 0 4px rgba(184, 134, 11, 0.12) !important;
+            animation: pulseOption 0.5s ease;
+        }
+        @keyframes pulseOption {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(184, 134, 11, 0);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(184, 134, 11, 0.08);
+            }
+        }
+        .option-letter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f0e8d5;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--gold);
+            flex-shrink: 0;
+            transition: all var(--transition);
+        }
+        .option-btn:hover .option-letter {
+            background: #e8d5a8;
+            color: #7a5c0a;
+        }
+        .option-text {
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        /* 结果页面 */
+        .result-area {
+            display: none;
+            text-align: center;
+            animation: fadeInUp 0.5s ease;
+        }
+        .result-area.active {
+            display: block;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-weapon-icon {
+            font-size: 3.5rem;
+            margin-bottom: 4px;
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+        @keyframes floatIcon {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+        .result-weapon-name {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: #3d2b1f;
+            margin-bottom: 4px;
+        }
+        .result-weapon-subtitle {
+            font-size: 0.85rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+            margin-bottom: 18px;
+        }
+
+        /* 雷达图容器 */
+        .radar-container {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0 16px;
+        }
+        .radar-canvas {
+            max-width: 280px;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1;
+        }
+
+        /* 六维数值条 */
+        .traits-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 18px;
+            text-align: left;
+        }
+        .trait-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .trait-label {
+            width: 38px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text);
+            text-align: right;
+            flex-shrink: 0;
+            letter-spacing: 1px;
+        }
+        .trait-bar-outer {
+            flex: 1;
+            height: 10px;
+            background: #e8e0d3;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .trait-bar-inner {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            width: 0;
+        }
+        .trait-value {
+            width: 32px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text);
+            flex-shrink: 0;
+            text-align: left;
+        }
+        .bar-gangmeng {
+            background: linear-gradient(90deg, #c0392b, #e74c3c);
+        }
+        .bar-lingqiao {
+            background: linear-gradient(90deg, #d4842a, #f0a040);
+        }
+        .bar-chenwen {
+            background: linear-gradient(90deg, #7b5e3b, #a0784a);
+        }
+        .bar-moulve {
+            background: linear-gradient(90deg, #6b4f8a, #8b6faa);
+        }
+        .bar-renxing {
+            background: linear-gradient(90deg, #2c5f8a, #4a8ab5);
+        }
+        .bar-zhongzheng {
+            background: linear-gradient(90deg, #b8860b, #d4a745);
+        }
+
+        /* 结论文字 */
+        .result-conclusion {
+            background: #fffdf6;
+            border: 1px solid #e8dcc8;
+            border-radius: var(--radius-sm);
+            padding: 16px 18px;
+            text-align: left;
+            line-height: 1.7;
+            font-size: 0.9rem;
+            color: #4a3a2a;
+            margin-bottom: 16px;
+        }
+        .result-conclusion .highlight {
+            color: var(--red);
+            font-weight: 600;
+        }
+        .result-mbti {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 0.78rem;
+            color: var(--gold);
+            letter-spacing: 1px;
+            font-weight: 500;
+            background: #fdf8ee;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid #e8d5a8;
+        }
+
+        /* 按钮 */
+        .btn-restart {
+            display: inline-block;
+            padding: 12px 32px;
+            background: linear-gradient(135deg, #b8860b, #c9a040);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+            box-shadow: 0 4px 16px rgba(184, 134, 11, 0.3);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-restart:hover {
+            box-shadow: 0 6px 24px rgba(184, 134, 11, 0.4);
+            transform: translateY(-2px);
+        }
+        .btn-restart:active {
+            transform: scale(0.96);
+            transition: 0.1s ease;
+        }
+
+        /* 底部信息 */
+        .footer-note {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #b0a590;
+            margin-top: 14px;
+            letter-spacing: 1px;
+            user-select: none;
+        }
+
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .main-card {
+                padding: 22px 16px 18px;
+                border-radius: 14px;
+                min-height: 380px;
+            }
+            .test-title {
+                font-size: 1.3rem;
+                letter-spacing: 1.5px;
+            }
+            .test-subtitle {
+                font-size: 0.72rem;
+                letter-spacing: 2px;
+            }
+            .question-text {
+                font-size: 1.05rem;
+            }
+            .option-btn {
+                padding: 12px 14px;
+                font-size: 0.9rem;
+                gap: 10px;
+            }
+            .option-letter {
+                width: 28px;
+                height: 28px;
+                font-size: 0.78rem;
+            }
+            .result-weapon-name {
+                font-size: 1.6rem;
+            }
+            .result-weapon-icon {
+                font-size: 2.8rem;
+            }
+            .radar-canvas {
+                max-width: 230px;
+            }
+            .trait-label {
+                width: 32px;
+                font-size: 0.75rem;
+            }
+            .trait-value {
+                width: 26px;
+                font-size: 0.72rem;
+            }
+            .result-conclusion {
+                font-size: 0.82rem;
+                padding: 12px 14px;
+            }
+        }
+        @media (max-width: 360px) {
+            .main-card {
+                padding: 18px 12px 14px;
+                min-height: 350px;
+            }
+            .question-text {
+                font-size: 0.95rem;
+            }
+            .option-btn {
+                padding: 10px 12px;
+                font-size: 0.85rem;
+                gap: 8px;
+                border-radius: 8px;
+            }
+            .radar-canvas {
+                max-width: 200px;
+            }
+            .trait-label {
+                width: 28px;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部装饰文字 -->
+        <div class="top-ornament">◆ 武 器 人 格 测 试 ◆</div>
+
+        <!-- 主卡片 -->
+        <div class="main-card" id="mainCard">
+            <!-- 标题 -->
+            <div class="test-title">测一测，你最适合哪种兵器</div>
+            <div class="test-subtitle">参考MBTI人格测试 · 六维特质分析</div>
+
+            <!-- 进度条 -->
+            <div class="progress-wrap" id="progressWrap">
+                <div class="progress-bar-outer">
+                    <div class="progress-bar-inner" id="progressBar" style="width: 0%;"></div>
+                </div>
+                <span class="progress-text" id="progressText">0/8</span>
+            </div>
+
+            <!-- 题目区域 -->
+            <div class="question-area" id="questionArea">
+                <div class="question-number" id="questionNumber">第 1 题</div>
+                <div class="question-text" id="questionText"></div>
+                <div class="options-list" id="optionsList"></div>
+            </div>
+
+            <!-- 结果区域 -->
+            <div class="result-area" id="resultArea">
+                <div class="result-weapon-icon" id="resultIcon"></div>
+                <div class="result-weapon-name" id="resultName"></div>
+                <div class="result-weapon-subtitle" id="resultSubtitle"></div>
+                <!-- 雷达图 -->
+                <div class="radar-container">
+                    <canvas class="radar-canvas" id="radarCanvas" width="560" height="560"></canvas>
+                </div>
+                <!-- 六维数值条 -->
+                <div class="traits-bars" id="traitsBars"></div>
+                <!-- 测试结论 -->
+                <div class="result-conclusion" id="resultConclusion"></div>
+                <!-- MBTI参考 -->
+                <div class="result-mbti" id="resultMbti"></div>
+                <br><br>
+                <!-- 重新测试按钮 -->
+                <button class="btn-restart" id="btnRestart">重 新 测 试</button>
+            </div>
+        </div>
+
+        <!-- 底部注释 -->
+        <div class="footer-note">静心作答 · 以心择器 · 器如其人</div>
+    </div>
+
+    <script>
+        (function() {
+            // ============ 题目数据 ============
+            const questions = [{
+                id: 1,
+                text: '面对强敌时，你的第一反应更接近？',
+                options: [
+                    { letter: 'A', text: '正面迎击，以力破力，气势压倒对方', scores: { gangmeng: 2 } },
+                    { letter: 'B', text: '迂回周旋，寻找破绽，以巧取胜', scores: { lingqiao: 2 } },
+                    { letter: 'C', text: '稳固防守，静待时机，后发制人', scores: { chenwen: 2 } },
+                    { letter: 'D', text: '分析敌情，制定策略，谋定后动', scores: { moulve: 2 } },
+                ],
+            }, {
+                id: 2,
+                text: '在团队协作中，你更倾向于扮演什么角色？',
+                options: [
+                    { letter: 'A', text: '冲锋陷阵的先锋，带动团队士气', scores: { gangmeng: 1, renxing: 1 } },
+                    { letter: 'B', text: '灵活支援的游击手，哪里需要去哪里', scores: { lingqiao: 1, zhongzheng: 1 } },
+                    { letter: 'C', text: '稳定军心的后盾，默默支撑团队', scores: { chenwen: 1, renxing: 1 } },
+                    { letter: 'D', text: '运筹帷幄的军师，为大家指明方向', scores: { moulve: 2 } },
+                ],
+            }, {
+                id: 3,
+                text: '做重要决定时，你最依赖什么？',
+                options: [
+                    { letter: 'A', text: '直觉和本能，当机立断不犹豫', scores: { gangmeng: 2 } },
+                    { letter: 'B', text: '灵活判断，根据情况随机应变', scores: { lingqiao: 2 } },
+                    { letter: 'C', text: '过往经验和可靠数据，稳扎稳打', scores: { chenwen: 2 } },
+                    { letter: 'D', text: '逻辑分析和深度推理，反复权衡', scores: { moulve: 2 } },
+                ],
+            }, {
+                id: 4,
+                text: '遭遇失败和挫折时，你通常会？',
+                options: [
+                    { letter: 'A', text: '越挫越勇，立刻振作准备再战', scores: { gangmeng: 1, renxing: 1 } },
+                    { letter: 'B', text: '迅速调整策略，换一种方式尝试', scores: { lingqiao: 1, moulve: 1 } },
+                    { letter: 'C', text: '冷静复盘，仔细总结经验教训', scores: { chenwen: 1, moulve: 1 } },
+                    { letter: 'D', text: '坦然接受，相信一切都有其意义', scores: { zhongzheng: 1, renxing: 1 } },
+                ],
+            }, {
+                id: 5,
+                text: '以下哪种品质最让你心生向往？',
+                options: [
+                    { letter: 'A', text: '一往无前的胆魄与豪情', scores: { gangmeng: 2 } },
+                    { letter: 'B', text: '随机应变的机智与灵动', scores: { lingqiao: 2 } },
+                    { letter: 'C', text: '泰山崩于前而色不变的定力', scores: { chenwen: 2 } },
+                    { letter: 'D', text: '兼济天下、不偏不倚的胸怀', scores: { zhongzheng: 2 } },
+                ],
+            }, {
+                id: 6,
+                text: '在巨大压力之下，你的表现通常是？',
+                options: [
+                    { letter: 'A', text: '压力越大爆发力越强，迎难而上', scores: { gangmeng: 1, renxing: 1 } },
+                    { letter: 'B', text: '找到捷径快速破局，化繁为简', scores: { lingqiao: 1, moulve: 1 } },
+                    { letter: 'C', text: '保持冷静按部就班，不受干扰', scores: { chenwen: 1, zhongzheng: 1 } },
+                    { letter: 'D', text: '坚韧承受，默默等待转机到来', scores: { renxing: 2 } },
+                ],
+            }, {
+                id: 7,
+                text: '对于"规则"和"传统"，你的态度是？',
+                options: [
+                    { letter: 'A', text: '规则是用来打破的，敢为天下先', scores: { gangmeng: 2 } },
+                    { letter: 'B', text: '规则可以灵活变通，不必死守', scores: { lingqiao: 2 } },
+                    { letter: 'C', text: '规则是秩序的保障，应当尊重遵守', scores: { chenwen: 1, zhongzheng: 1 } },
+                    { letter: 'D', text: '理解规则背后的逻辑，善加利用', scores: { moulve: 2 } },
+                ],
+            }, {
+                id: 8,
+                text: '如果选择一种修炼成长的方式，你会选？',
+                options: [
+                    { letter: 'A', text: '在实战中磨砺，以战养战不断突破', scores: { gangmeng: 2 } },
+                    { letter: 'B', text: '博采众长，融会贯通各家精华', scores: { lingqiao: 1, zhongzheng: 1 } },
+                    { letter: 'C', text: '专注一门深入钻研，精益求精', scores: { chenwen: 1, renxing: 1 } },
+                    { letter: 'D', text: '闭关参悟，从原理层面理解武学', scores: { moulve: 2 } },
+                ],
+            }, ];
+
+            // ============ 兵器结果数据 ============
+            const weaponResults = {
+                '青龙刀': {
+                    icon: '🗡️',
+                    subtitle: '刚猛霸道 · 一往无前',
+                    traits: { gangmeng: 90, lingqiao: 20, chenwen: 40, moulve: 30, renxing: 50, zhongzheng: 40 },
+                    conclusion: '你天生具有<span class="highlight">领袖气质</span>，行事雷厉风行，面对挑战从不退缩。如同青龙偃月刀般刚猛霸道，你坚信力量可以碾碎一切阻碍。在团队中你是冲锋陷阵的先锋，你的勇气和决心能激励身边的人。<br><br>但有时也需注意，<span class="highlight">过刚易折</span>，适时收敛锋芒、以柔克刚，方能走得更远。',
+                    mbti: 'MBTI参考：ESTP / ENTJ',
+                },
+                '君子剑': {
+                    icon: '⚔️',
+                    subtitle: '中正平和 · 君子之风',
+                    traits: { gangmeng: 30, lingqiao: 70, chenwen: 50, moulve: 40, renxing: 40, zhongzheng: 90 },
+                    conclusion: '你追求<span class="highlight">平衡与和谐</span>，内心有一套坚定的道德准则。如同君子之剑，中正平和而不失锋芒，你以理服人而非以力压人。你善于在复杂局面中找到最优解，不偏不倚的态度让你成为众人信赖的对象。<br><br>保持这份<span class="highlight">内心的中正</span>，它将是你在纷繁世界中不迷失的灯塔。',
+                    mbti: 'MBTI参考：INFJ / ISFJ',
+                },
+                '游龙枪': {
+                    icon: '🔱',
+                    subtitle: '灵活机变 · 出奇制胜',
+                    traits: { gangmeng: 60, lingqiao: 85, chenwen: 30, moulve: 50, renxing: 30, zhongzheng: 40 },
+                    conclusion: '你<span class="highlight">思维敏捷、灵动多变</span>，总能在关键时刻找到出人意料的解决方案。如同游龙枪般灵活诡谲，你不按常理出牌，却往往能出奇制胜。你享受变化带来的刺激，厌倦一成不变的 routine。<br><br>你的<span class="highlight">创造力</span>是你最大的武器，但偶尔也需要一些耐心来让想法落地生根。',
+                    mbti: 'MBTI参考：ENTP / ENFP',
+                },
+                '磐石棍': {
+                    icon: '🪨',
+                    subtitle: '沉稳如山 · 大巧若拙',
+                    traits: { gangmeng: 50, lingqiao: 20, chenwen: 90, moulve: 30, renxing: 80, zhongzheng: 50 },
+                    conclusion: '你<span class="highlight">沉稳如山</span>，是团队中最可靠的后盾。如同磐石棍般大巧若拙，你不追求花哨的技巧，而是以扎实的基本功和坚韧的意志取胜。在风暴中你是那根定海神针，你的沉稳给予身边人无尽的安全感。<br><br><span class="highlight">厚积薄发</span>是你的信条，时间终将证明你积累的力量。',
+                    mbti: 'MBTI参考：ISTJ / INTJ',
+                },
+                '穿云弓': {
+                    icon: '🏹',
+                    subtitle: '深谋远虑 · 一击必中',
+                    traits: { gangmeng: 30, lingqiao: 60, chenwen: 40, moulve: 92, renxing: 30, zhongzheng: 50 },
+                    conclusion: '你<span class="highlight">深谋远虑</span>，善于从全局视角分析问题。如同穿云弓般，你不急于出手，而是在等待最佳时机，一旦放箭必中要害。你喜欢在行动前做好万全准备，你的远见卓识让周围的人钦佩不已。<br><br>谨记，<span class="highlight">时机固然重要</span>，但完美主义有时也会让机会从指缝间溜走。',
+                    mbti: 'MBTI参考：INTP / INTJ',
+                },
+                '玄铁盾': {
+                    icon: '🛡️',
+                    subtitle: '坚韧守护 · 以守为攻',
+                    traits: { gangmeng: 40, lingqiao: 20, chenwen: 70, moulve: 30, renxing: 92, zhongzheng: 60 },
+                    conclusion: '你<span class="highlight">坚韧不拔</span>，拥有超乎常人的忍耐力。如同玄铁盾般坚不可摧，你以守为攻，在逆境中展现出惊人的韧性。你重视守护自己所珍视的人和事物，是值得托付的可靠伙伴。<br><br>你的<span class="highlight">守护之心</span>令人敬佩，但也不要忘记偶尔为自己留一些柔软的空间。',
+                    mbti: 'MBTI参考：ISFJ / ISTJ',
+                },
+            };
+
+            // 六维名称映射
+            const traitNamesMap = {
+                gangmeng: '刚猛',
+                lingqiao: '灵巧',
+                chenwen: '沉稳',
+                moulve: '谋略',
+                renxing: '韧性',
+                zhongzheng: '中正',
+            };
+            const traitOrder = ['gangmeng', 'lingqiao', 'chenwen', 'moulve', 'renxing', 'zhongzheng'];
+            const traitBarClasses = ['bar-gangmeng', 'bar-lingqiao', 'bar-chenwen', 'bar-moulve', 'bar-renxing',
+                'bar-zhongzheng'
+            ];
+
+            // ============ 状态 ============
+            let currentQuestionIndex = 0;
+            let rawScores = { gangmeng: 0, lingqiao: 0, chenwen: 0, moulve: 0, renxing: 0, zhongzheng: 0 };
+            let isAnimating = false;
+
+            // ============ DOM元素 ============
+            const questionArea = document.getElementById('questionArea');
+            const resultArea = document.getElementById('resultArea');
+            const questionNumber = document.getElementById('questionNumber');
+            const questionText = document.getElementById('questionText');
+            const optionsList = document.getElementById('optionsList');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const progressWrap = document.getElementById('progressWrap');
+            const mainCard = document.getElementById('mainCard');
+            const radarCanvas = document.getElementById('radarCanvas');
+            const traitsBars = document.getElementById('traitsBars');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultName = document.getElementById('resultName');
+            const resultSubtitle = document.getElementById('resultSubtitle');
+            const resultConclusion = document.getElementById('resultConclusion');
+            const resultMbti = document.getElementById('resultMbti');
+            const btnRestart = document.getElementById('btnRestart');
+
+            // ============ 渲染题目 ============
+            function renderQuestion(index) {
+                if (index >= questions.length) {
+                    showResult();
+                    return;
+                }
+                const q = questions[index];
+                questionNumber.textContent = `第 ${q.id} 题`;
+                questionText.textContent = q.text;
+                optionsList.innerHTML = '';
+
+                q.options.forEach((opt, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerHTML = `
+                        <span class="option-letter">${opt.letter}</span>
+                        <span class="option-text">${opt.text}</span>
+                    `;
+                    btn.addEventListener('click', () => handleOptionClick(btn, opt, index));
+                    optionsList.appendChild(btn);
+                });
+
+                // 更新进度条
+                const progress = Math.round((index / questions.length) * 100);
+                progressBar.style.width = progress + '%';
+                progressText.textContent = `${index}/${questions.length}`;
+
+                // 显示题目区，隐藏结果区
+                questionArea.style.display = 'block';
+                questionArea.classList.remove('fade-out');
+                resultArea.classList.remove('active');
+                resultArea.style.display = 'none';
+                progressWrap.style.display = 'flex';
+            }
+
+            // ============ 处理选项点击 ============
+            function handleOptionClick(btn, opt, questionIndex) {
+                if (isAnimating) return;
+                isAnimating = true;
+
+                // 高亮选中的选项
+                btn.classList.add('selected-flash');
+
+                // 累加得分
+                if (opt.scores) {
+                    Object.keys(opt.scores).forEach(key => {
+                        if (rawScores.hasOwnProperty(key)) {
+                            rawScores[key] += opt.scores[key];
+                        }
+                    });
+                }
+
+                // 延迟后进入下一题
+                setTimeout(() => {
+                    btn.classList.remove('selected-flash');
+                    questionArea.classList.add('fade-out');
+
+                    setTimeout(() => {
+                        questionArea.classList.remove('fade-out');
+                        currentQuestionIndex++;
+                        if (currentQuestionIndex >= questions.length) {
+                            showResult();
+                        } else {
+                            renderQuestion(currentQuestionIndex);
+                        }
+                        isAnimating = false;
+                    }, 250);
+                }, 350);
+            }
+
+            // ============ 显示结果 ============
+            function showResult() {
+                // 隐藏题目区
+                questionArea.style.display = 'none';
+                progressWrap.style.display = 'none';
+
+                // 归一化得分到0-100
+                const normalizedScores = normalizeScores(rawScores);
+
+                // 匹配最佳兵器
+                const bestWeapon = findBestWeapon(normalizedScores);
+
+                // 显示结果区
+                resultArea.style.display = 'block';
+                resultArea.classList.add('active');
+
+                // 填充结果数据
+                resultIcon.textContent = bestWeapon.icon;
+                resultName.textContent = bestWeapon.name;
+                resultSubtitle.textContent = bestWeapon.subtitle;
+                resultConclusion.innerHTML = bestWeapon.conclusion;
+                resultMbti.textContent = bestWeapon.mbti;
+
+                // 绘制雷达图（使用用户实际得分）
+                drawRadarChart(normalizedScores);
+
+                // 渲染六维数值条
+                renderTraitsBars(normalizedScores);
+
+                // 滚动到结果顶部（移动端友好）
+                setTimeout(() => {
+                    mainCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+
+            // ============ 归一化得分 ============
+            function normalizeScores(raw) {
+                // 计算每个维度的原始分，理论最大约16，映射到0-100
+                const normalized = {};
+                const maxPossible = 16; // 8道题 * 每题最高2分
+                traitOrder.forEach(key => {
+                    const val = Math.min(raw[key], maxPossible);
+                    normalized[key] = Math.round((val / maxPossible) * 100);
+                });
+                // 确保至少有一些区分度，给所有值加一点基础
+                const allLow = traitOrder.every(k => normalized[k] < 25);
+                if (allLow) {
+                    traitOrder.forEach(k => { normalized[k] = Math.min(100, normalized[k] + 20); });
+                }
+                return normalized;
+            }
+
+            // ============ 匹配最佳兵器 ============
+            function findBestWeapon(userScores) {
+                let bestMatch = null;
+                let bestSimilarity = -Infinity;
+                const weaponNames = Object.keys(weaponResults);
+
+                weaponNames.forEach(name => {
+                    const weaponTraits = weaponResults[name].traits;
+                    const similarity = cosineSimilarity(userScores, weaponTraits);
+                    if (similarity > bestSimilarity) {
+                        bestSimilarity = similarity;
+                        bestMatch = name;
+                    }
+                });
+
+                return {
+                    name: bestMatch,
+                    ...weaponResults[bestMatch],
+                };
+            }
+
+            // ============ 余弦相似度 ============
+            function cosineSimilarity(a, b) {
+                const keys = traitOrder;
+                let dot = 0;
+                let normA = 0;
+                let normB = 0;
+                keys.forEach(k => {
+                    dot += (a[k] || 0) * (b[k] || 0);
+                    normA += (a[k] || 0) ** 2;
+                    normB += (b[k] || 0) ** 2;
+                });
+                if (normA === 0 || normB === 0) return 0;
+                return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+            }
+
+            // ============ 绘制雷达图 ============
+            function drawRadarChart(scores) {
+                const canvas = radarCanvas;
+                const ctx = canvas.getContext('2d');
+                const size = canvas.width; // 560
+                const cx = size / 2;
+                const cy = size / 2;
+                const maxRadius = size * 0.38; // 约213px
+                const levels = 5; // 5层背景网格
+                const numAxes = 6;
+
+                ctx.clearRect(0, 0, size, size);
+
+                // 计算各轴角度（从顶部顺时针）
+                const angles = traitOrder.map((_, i) => {
+                    return -Math.PI / 2 + (i * 2 * Math.PI) / numAxes;
+                });
+
+                // 绘制背景网格
+                for (let level = 1; level <= levels; level++) {
+                    const r = (maxRadius / levels) * level;
+                    ctx.beginPath();
+                    angles.forEach((angle, i) => {
+                        const x = cx + r * Math.cos(angle);
+                        const y = cy + r * Math.sin(angle);
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    });
+                    ctx.closePath();
+                    ctx.strokeStyle = level === levels ? '#d4c5a9' : '#e8e0d3';
+                    ctx.lineWidth = level === levels ? 1.5 : 0.8;
+                    ctx.stroke();
+                }
+
+                // 绘制轴线
+                angles.forEach(angle => {
+                    const x = cx + maxRadius * Math.cos(angle);
+                    const y = cy + maxRadius * Math.sin(angle);
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(x, y);
+                    ctx.strokeStyle = '#e0d7c6';
+                    ctx.lineWidth = 0.6;
+                    ctx.stroke();
+                });
+
+                // 绘制数据区域（填充）
+                const dataPoints = angles.map((angle, i) => {
+                    const key = traitOrder[i];
+                    const val = (scores[key] || 0) / 100;
+                    const r = maxRadius * val;
+                    return {
+                        x: cx + r * Math.cos(angle),
+                        y: cy + r * Math.sin(angle),
+                    };
+                });
+
+                // 填充
+                ctx.beginPath();
+                dataPoints.forEach((pt, i) => {
+                    if (i === 0) ctx.moveTo(pt.x, pt.y);
+                    else ctx.lineTo(pt.x, pt.y);
+                });
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(184, 134, 11, 0.18)';
+                ctx.fill();
+
+                // 数据边框
+                ctx.beginPath();
+                dataPoints.forEach((pt, i) => {
+                    if (i === 0) ctx.moveTo(pt.x, pt.y);
+                    else ctx.lineTo(pt.x, pt.y);
+                });
+                ctx.closePath();
+                ctx.strokeStyle = '#b8860b';
+                ctx.lineWidth = 2.5;
+                ctx.lineJoin = 'round';
+                ctx.stroke();
+
+                // 数据顶点圆点
+                dataPoints.forEach(pt => {
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, 6, 0, Math.PI * 2);
+                    ctx.fillStyle = '#b8860b';
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2);
+                    ctx.fillStyle = '#fff';
+                    ctx.fill();
+                });
+
+                // 标注维度名称
+                const labelDist = maxRadius + 38;
+                ctx.fillStyle = '#3d2b1f';
+                ctx.font = '600 22px "PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                angles.forEach((angle, i) => {
+                    const lx = cx + labelDist * Math.cos(angle);
+                    const ly = cy + labelDist * Math.sin(angle);
+                    const name = traitNamesMap[traitOrder[i]];
+                    // 微调避免文字被裁切
+                    let adjX = lx;
+                    let adjY = ly;
+                    if (Math.abs(angle + Math.PI / 2) < 0.1) adjY -= 4; // 顶部
+                    if (Math.abs(angle - Math.PI / 2) < 0.1) adjY += 4; // 底部
+                    ctx.fillText(name, adjX, adjY);
+                });
+            }
+
+            // ============ 渲染六维数值条 ============
+            function renderTraitsBars(scores) {
+                traitsBars.innerHTML = '';
+                traitOrder.forEach((key, i) => {
+                    const val = scores[key] || 0;
+                    const name = traitNamesMap[key];
+                    const barClass = traitBarClasses[i];
+                    const row = document.createElement('div');
+                    row.className = 'trait-row';
+                    row.innerHTML = `
+                        <span class="trait-label">${name}</span>
+                        <div class="trait-bar-outer">
+                            <div class="trait-bar-inner ${barClass}" style="width: 0%;" data-width="${val}%"></div>
+                        </div>
+                        <span class="trait-value">${val}</span>
+                    `;
+                    traitsBars.appendChild(row);
+                });
+
+                // 延迟触发动画
+                setTimeout(() => {
+                    const bars = traitsBars.querySelectorAll('.trait-bar-inner');
+                    bars.forEach(bar => {
+                        bar.style.width = bar.getAttribute('data-width');
+                    });
+                }, 200);
+            }
+
+            // ============ 重新测试 ============
+            function restartTest() {
+                currentQuestionIndex = 0;
+                rawScores = { gangmeng: 0, lingqiao: 0, chenwen: 0, moulve: 0, renxing: 0, zhongzheng: 0 };
+                isAnimating = false;
+                resultArea.classList.remove('active');
+                resultArea.style.display = 'none';
+                questionArea.style.display = 'block';
+                questionArea.classList.remove('fade-out');
+                progressWrap.style.display = 'flex';
+                progressBar.style.width = '0%';
+                progressText.textContent = '0/8';
+                renderQuestion(0);
+                // 滚动到顶部
+                mainCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            btnRestart.addEventListener('click', restartTest);
+
+            // ============ 初始化 ============
+            function init() {
+                renderQuestion(0);
+                resultArea.style.display = 'none';
+                resultArea.classList.remove('active');
+                progressWrap.style.display = 'flex';
+            }
+
+            // ============ 处理Canvas在高DPI下的清晰度 ============
+            function handleDPR() {
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                const canvas = radarCanvas;
+                const displayWidth = canvas.clientWidth || 280;
+                // 内部尺寸已在HTML中设为560x560，足够清晰
+                // 确保CSS显示尺寸合理
+                if (window.innerWidth <= 360) {
+                    canvas.style.maxWidth = '200px';
+                } else if (window.innerWidth <= 480) {
+                    canvas.style.maxWidth = '230px';
+                } else {
+                    canvas.style.maxWidth = '280px';
+                }
+            }
+
+            window.addEventListener('resize', handleDPR);
+            handleDPR();
+
+            // 启动
+            init();
+
+            console.log('🗡️  兵器人格测试已就绪 | 参考MBTI | 六维特质分析');
+            console.log('   静心作答 · 以心择器 · 器如其人');
+        })();
+    </script>
+</body>
+</html>
